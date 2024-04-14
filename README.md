@@ -1,197 +1,107 @@
 # CLIP
 
-[[Blog]](https://openai.com/blog/clip/) [[Paper]](https://arxiv.org/abs/2103.00020) [[Model Card]](model-card.md)
+## 目录 <!-- omit in toc -->
 
-CLIP (Contrastive Language-Image Pre-Training) is a neural network trained on a variety of (image, text) pairs. It can be instructed in natural language to predict the most relevant text snippet, given an image, without directly optimizing for the task, similarly to the zero-shot capabilities of GPT-2 and 3. We found CLIP matches the performance of the original ResNet50 on ImageNet “zero-shot” without using any of the original 1.28M labeled examples, overcoming several major challenges in computer vision.
+## 1. 简介
+CLIP（Contrastive Language-Image Pre-Training）是一个在多种（图像，文本）配对上训练的神经网络。它可以用自然语言进行指导，以预测给定图像最相关的文本片段，而无需直接针对该任务进行优化，这与GPT-2和3的零样本（zero-shot）能力类似。本例程对[CLIP官方开源仓库](https://github.com/openai/CLIP)中的算法进行移植，使之能在SOPHON BM1684X上进行推理。
+
+[[Blog]](https://openai.com/blog/clip/) [[Paper]](https://arxiv.org/abs/2103.00020)
+
+![CLIP](./CLIP.png)
+
+## 2. 特性
+* 支持BM1684X(x86 PCIe、SoC)
+* 支持FP16(BM1684X)模型编译和推理
+* 支持基于SAIL推理的Python例程
 
 
+## 3. 准备模型与数据
+该模型目前只支持在1684X上运行，已提供编译好的bmodel，​同时，您需要准备用于测试的数据集。
 
-## Approach
-
-![CLIP](./datasets/test/CLIP.png)
-
-
-
-## Usage
-
-First, [install PyTorch 1.7.1](https://pytorch.org/get-started/locally/) (or later) and torchvision, as well as small additional dependencies, and then install this repo as a Python package. On a CUDA GPU machine, the following will do the trick:
+​本例程在`scripts`目录下提供了相关模型和数据的下载脚本`download.sh`。
 
 ```bash
-$ conda install --yes -c pytorch pytorch=1.7.1 torchvision cudatoolkit=11.0
-$ pip install ftfy regex tqdm
-$ pip install git+https://github.com/openai/CLIP.git
+# 安装unzip，若已安装请跳过
+sudo apt install unzip
+chmod -R +x scripts/
+./scripts/download.sh
 ```
 
-Replace `cudatoolkit=11.0` above with the appropriate CUDA version on your machine or `cpuonly` when installing on a machine without a GPU.
+下载的模型包括：
+```
+./models
+    └── BM1684X
+        ├── clip_image_vitb32_bm1684x_f16_16b.bmodel
+        ├── clip_image_vitb32_bm1684x_f16_1b.bmodel
+        ├── clip_image_vitb32_bm1684x_f16_32b.bmodel
+        ├── clip_image_vitb32_bm1684x_f16_8b.bmodel
+        ├── clip_text_vitb32_bm1684x_f16_4b.bmodel
+        └── text_projection_512_512.npy
+```
 
-```python
-import torch
-import clip
-from PIL import Image
+```
+./datasets
+    └──
+        ├── cifar-100-images
+        ├── cifar-100-python
+        ├── imagenet_val_1k
+        └── test
+```
 
-device = "cuda" if torch.cuda.is_available() else "cpu"
-model, preprocess = clip.load("ViT-B/32", device=device)
+## 4. 模型编译
+此部分请参考[Whisper模型的导出与编译](./docs/ChatGLM3_Export_Guide.md)
 
-image = preprocess(Image.open("CLIP.png")).unsqueeze(0).to(device)
-text = clip.tokenize(["a diagram", "a dog", "a cat"]).to(device)
 
-with torch.no_grad():
-    image_features = model.encode_image(image)
-    text_features = model.encode_text(text)
+## 安装环境
 
-    logits_per_image, logits_per_text = model(image, text)
-    probs = logits_per_image.softmax(dim=-1).cpu().numpy()
+### 安装第三方库
 
-print("Label probs:", probs)  # prints: [[0.9927937  0.00421068 0.00299572]]
+```bash
+pip install -r requirements.txt -i https://pypi.tuna.tsinghua.edu.cn/simple
+```
+### 安装sail
+
+sail安装方法可参考[Sail_Install_Guide](./docs/Sail_Install_Guide.md)
+
+
+## 使用案例
+
+图像编码
+```bash
+python embeddings.py
+```
+```
+INFO:root:------------------ Image Encode Time Info ----------------------
+INFO:root:Total images: 1000
+INFO:root:Total time use: 5387.02ms
+INFO:root:Avg time use: 5.39ms
+INFO:root:185.63 FPS
 ```
 
 
-## API
-
-The CLIP module `clip` provides the following methods:
-
-#### `clip.available_models()`
-
-Returns the names of the available CLIP models.
-
-#### `clip.load(name, device=..., jit=False)`
-
-Returns the model and the TorchVision transform needed by the model, specified by the model name returned by `clip.available_models()`. It will download the model as necessary. The `name` argument can also be a path to a local checkpoint.
-
-The device to run the model can be optionally specified, and the default is to use the first CUDA device if there is any, otherwise the CPU. When `jit` is `False`, a non-JIT version of the model will be loaded.
-
-#### `clip.tokenize(text: Union[str, List[str]], context_length=77)`
-
-Returns a LongTensor containing tokenized sequences of given text input(s). This can be used as the input to the model
-
----
-
-The model returned by `clip.load()` supports the following methods:
-
-#### `model.encode_image(image: Tensor)`
-
-Given a batch of images, returns the image features encoded by the vision portion of the CLIP model.
-
-#### `model.encode_text(text: Tensor)`
-
-Given a batch of text tokens, returns the text features encoded by the language portion of the CLIP model.
-
-#### `model(image: Tensor, text: Tensor)`
-
-Given a batch of images and a batch of text tokens, returns two Tensors, containing the logit scores corresponding to each image and text input. The values are cosine similarities between the corresponding image and text features, times 100.
+## 6. 精度测试
+### 6.1 测试方法
 
 
 
-## More Examples
-
-### Zero-Shot Prediction
-
-The code below performs zero-shot prediction using CLIP, as shown in Appendix B in the paper. This example takes an image from the [CIFAR-100 dataset](https://www.cs.toronto.edu/~kriz/cifar.html), and predicts the most likely labels among the 100 textual labels from the dataset.
-
-```python
-import os
-import clip
-import torch
-from torchvision.datasets import CIFAR100
-
-# Load the model
-device = "cuda" if torch.cuda.is_available() else "cpu"
-model, preprocess = clip.load('ViT-B/32', device)
-
-# Download the dataset
-cifar100 = CIFAR100(root=os.path.expanduser("~/.cache"), download=True, train=False)
-
-# Prepare the inputs
-image, class_id = cifar100[3637]
-image_input = preprocess(image).unsqueeze(0).to(device)
-text_inputs = torch.cat([clip.tokenize(f"a photo of a {c}") for c in cifar100.classes]).to(device)
-
-# Calculate features
-with torch.no_grad():
-    image_features = model.encode_image(image_input)
-    text_features = model.encode_text(text_inputs)
-
-# Pick the top 5 most similar labels for the image
-image_features /= image_features.norm(dim=-1, keepdim=True)
-text_features /= text_features.norm(dim=-1, keepdim=True)
-similarity = (100.0 * image_features @ text_features.T).softmax(dim=-1)
-values, indices = similarity[0].topk(5)
-
-# Print the result
-print("\nTop predictions:\n")
-for value, index in zip(values, indices):
-    print(f"{cifar100.classes[index]:>16s}: {100 * value.item():.2f}%")
-```
-
-The output will look like the following (the exact numbers may be slightly different depending on the compute device):
-
-```
-Top predictions:
-
-           snake: 65.31%
-          turtle: 12.29%
-    sweet_pepper: 3.83%
-          lizard: 1.88%
-       crocodile: 1.75%
-```
-
-Note that this example uses the `encode_image()` and `encode_text()` methods that return the encoded features of given inputs.
+### 6.2 测试结果
+在aishell数据集上，精度测试结果如下：
+|   测试平台    |    测试程序   |              测试模型                                 | WER    |
+| ------------ | ------------ | ----------------------------------------------------- | ------ |
 
 
-### Linear-probe evaluation
+> **测试说明**：
+1. 在使用的模型相同的情况下，wer在不同的测试平台上是相同的。
+2. 由于SDK版本之间的差异，实测的wer与本表有1%以内的差值是正常的。
 
-The example below uses [scikit-learn](https://scikit-learn.org/) to perform logistic regression on image features.
-
-```python
-import os
-import clip
-import torch
-
-import numpy as np
-from sklearn.linear_model import LogisticRegression
-from torch.utils.data import DataLoader
-from torchvision.datasets import CIFAR100
-from tqdm import tqdm
-
-# Load the model
-device = "cuda" if torch.cuda.is_available() else "cpu"
-model, preprocess = clip.load('ViT-B/32', device)
-
-# Load the dataset
-root = os.path.expanduser("~/.cache")
-train = CIFAR100(root, download=True, train=True, transform=preprocess)
-test = CIFAR100(root, download=True, train=False, transform=preprocess)
+## 7. 性能测试
+|    测试平台   |     测试程序      |           测试模型                  |  Preprocess time(ms) |    Inference time(ms)   |
+| -----------  | ---------------- | -----------------------------------| --------------------- | ----------------------- |
 
 
-def get_features(dataset):
-    all_features = []
-    all_labels = []
-
-    with torch.no_grad():
-        for images, labels in tqdm(DataLoader(dataset, batch_size=100)):
-            features = model.encode_image(images.to(device))
-
-            all_features.append(features)
-            all_labels.append(labels)
-
-    return torch.cat(all_features).cpu().numpy(), torch.cat(all_labels).cpu().numpy()
-
-# Calculate the image features
-train_features, train_labels = get_features(train)
-test_features, test_labels = get_features(test)
-
-# Perform logistic regression
-classifier = LogisticRegression(random_state=0, C=0.316, max_iter=1000, verbose=1)
-classifier.fit(train_features, train_labels)
-
-# Evaluate using the logistic regression classifier
-predictions = classifier.predict(test_features)
-accuracy = np.mean((test_labels == predictions).astype(float)) * 100.
-print(f"Accuracy = {accuracy:.3f}")
-```
-
-Note that the `C` value should be determined via a hyperparameter sweep using a validation split.
-
+> **测试说明**：
+> 1. 性能测试结果具有一定的波动性，实测结果与该表结果有误差属正常现象，建议多次测试取平均值。
+> 2. BM1684X SoC的主控处理器为8核 ARM A53 42320 DMIPS @2.3GHz。
 
 ## See Also
 

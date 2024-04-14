@@ -1,5 +1,6 @@
 __pycache__/
 datasets/
+!datasets/test/CLIP.png
 mocdels/
 tmp/
 results/
