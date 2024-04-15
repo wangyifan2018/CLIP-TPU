@@ -19,10 +19,8 @@ function gen_mlir()
 {
     model_transform.py \
       --model_name clip_image_vitb32 \
-      --model_def ./clip_image_vitb32.onnx \
+      --model_def ../models/onnx/clip_image_vitb32.onnx \
       --input_shapes [[$1,3,224,224]] \
-      --mean 123.675,116.28,103.53 \
-      --scale 0.0171,0.0175,0.0174 \
       --pixel_format rgb \
       --mlir clip_image_vitb32_$1b.mlir
 }
@@ -43,14 +41,18 @@ if [ ! -d $outdir ]; then
     mkdir -p $outdir
 fi
 # batch_size=1
-# gen_mlir 1
-# gen_fp16bmodel 1
+gen_mlir 1
+gen_fp16bmodel 1
 
 # batch_size=8
-# gen_mlir 8
-# gen_fp16bmodel 8
+gen_mlir 8
+gen_fp16bmodel 8
 
 # batch_size=16
 gen_mlir 16
 gen_fp16bmodel 16
+
+# batch_size=32
+gen_mlir 32
+gen_fp16bmodel 32
 popd

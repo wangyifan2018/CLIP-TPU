@@ -4,7 +4,10 @@ datasets/
 mocdels/
 tmp/
 results/
+sophon-sail/
 models/
 *.bmodel
 *.onnx
 *.pt
+*.zip
+*.tar.gz

@@ -1,3 +1,11 @@
+#===----------------------------------------------------------------------===#
+#
+# Copyright (C) 2022 Sophgo Technologies Inc.  All rights reserved.
+#
+# SOPHON-DEMO is licensed under the 2-Clause BSD License except for the
+# third-party components.
+#
+#===----------------------------------------------------------------------===#
 import os
 import clip
 import torch
@@ -49,10 +57,9 @@ def main(args):
 
 def argsparser():
     parser = argparse.ArgumentParser(prog=__file__)
-    parser.add_argument('--input', type=str, default='CLIP.png', help='path of input')
     parser.add_argument('--image_model', type=str, default='./models/BM1684X/clip_image_vitb32_bm1684x_f16_32b.bmodel', help='path of image bmodel')
     parser.add_argument('--text_model', type=str, default='./models/BM1684X/clip_text_vitb32_bm1684x_f16_4b.bmodel', help='path of text bmodel')
-    parser.add_argument('--dev_id', type=int, default=4, help='dev id')
+    parser.add_argument('--dev_id', type=int, default=0, help='dev id')
     args = parser.parse_args()
     return args
 
