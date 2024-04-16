@@ -38,7 +38,7 @@ class CLIP_Multi(object):
         # init image engine
         self.engine_image_pre_process = sail.EngineImagePreProcess(image_model, self.dev_id, False)
         logging.info("load {} success!".format(image_model))
-        self.engine_image_pre_process.InitImagePreProcess(sail.sail_resize_type.BM_RESIZE_TPU_BICUBIC, True, self.max_que_size, self.max_que_size)
+        self.engine_image_pre_process.InitImagePreProcess(sail.sail_resize_type.BM_RESIZE_TPU_LINEAR, True, self.max_que_size, self.max_que_size)
         # self.engine_image_pre_process.SetPaddingAtrr(114,114,114,1)
         self.engine_image_pre_process.SetConvertAtrr(self.alpha_beta)
         self.net_w = self.engine_image_pre_process.get_input_width()
@@ -56,7 +56,7 @@ class CLIP_Multi(object):
         self.post_queue = queue.Queue(self.max_que_size)
 
 
-        # text bmodel
+        # init text engine
         self.text_net = sail.Engine(text_model, dev_id, sail.IOMode.SYSIO)
         logging.info("load {} success!".format(text_model))
         self.text_net_graph_name = self.text_net.get_graph_names()[0]

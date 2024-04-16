@@ -26,6 +26,6 @@ def argsparser():
 
 if __name__ == "__main__":
     args = argsparser()
-    process =  CLIP_Multi(args.image_model, args.text_model, args.img_dir, args.save_path, args.max_que_size, args.dev_id)
-    features = process.encode_image()
+    clip_multi =  CLIP_Multi(args.image_model, args.text_model, args.img_dir, args.save_path, args.max_que_size, args.dev_id)
+    features = clip_multi.encode_image()
     logging.info('all done.')
