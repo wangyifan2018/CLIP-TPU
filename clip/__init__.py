@@ -8,9 +8,10 @@
 #===----------------------------------------------------------------------===#
 from .simple_tokenizer import tokenize
 from .clip import CLIP
+from .clip_multi import CLIP_Multi
 
 
-def load(args):
+def load(image_model, text_model, dev_id):
     """Load a CLIP model
 
     Parameters
@@ -35,5 +36,5 @@ def load(args):
     preprocess : Callable[[PIL.Image], torch.Tensor]
         A torchvision transform that converts a PIL image into a tensor that the returned model can take as its input
     """
-    model = CLIP(args)
+    model = CLIP(image_model, text_model, dev_id)
     return model, model.preprocess

@@ -61,11 +61,10 @@ chmod -R +x scripts/
 
 ```
 ./datasets
-    └──
-        ├── cifar-100-images
-        ├── cifar-100-python
-        ├── imagenet_val_1k
-        └── test
+    ├── cifar-100-images
+    ├── cifar-100-python
+    ├── imagenet_val_1k
+    └── test
 ```
 
 

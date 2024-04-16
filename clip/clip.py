@@ -27,10 +27,10 @@ def _convert_image_to_rgb(image):
 
 
 class CLIP:
-    def __init__(self, args):
+    def __init__(self, image_model, text_model, dev_id):
         # image bmodel
-        self.image_net = sail.Engine(args.image_model, args.dev_id, sail.IOMode.SYSIO)
-        logging.info("load {} success!".format(args.image_model))
+        self.image_net = sail.Engine(image_model, dev_id, sail.IOMode.SYSIO)
+        logging.info("load {} success!".format(image_model))
         self.image_net_graph_name = self.image_net.get_graph_names()[0]
         self.image_net_input_name = self.image_net.get_input_names(self.image_net_graph_name)[0]
         self.image_net_output_name = self.image_net.get_output_names(self.image_net_graph_name)[0]
@@ -42,8 +42,8 @@ class CLIP:
         self.embed_dim = self.image_net_output_shape[1] # 512 for vit32-b
 
         # text bmodel
-        self.text_net = sail.Engine(args.text_model, args.dev_id, sail.IOMode.SYSIO)
-        logging.info("load {} success!".format(args.text_model))
+        self.text_net = sail.Engine(text_model, dev_id, sail.IOMode.SYSIO)
+        logging.info("load {} success!".format(text_model))
         self.text_net_graph_name = self.text_net.get_graph_names()[0]
         self.text_net_input_name = self.text_net.get_input_names(self.text_net_graph_name)[0]
         self.text_net_output_name = self.text_net.get_output_names(self.text_net_graph_name)[0]
