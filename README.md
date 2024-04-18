@@ -101,7 +101,7 @@ chmod -R +x scripts/
 ### 5.1 安装第三方库
 
 ```bash
-pip install -r requirements.txt -i https://pypi.tuna.tsinghua.edu.cn/simple
+pip3 install -r requirements.txt -i https://pypi.tuna.tsinghua.edu.cn/simple
 ```
 
 ### 5.2 安装sail
