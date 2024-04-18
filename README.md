@@ -186,10 +186,10 @@ bmrt_test --bmodel models/BM1684X/clip_image_vitb32_bm1684x_f16_1b.bmodel
 
 |                  测试模型                        | calculate time(ms)|
 | ----------------------------------------------- | ---------------- |
-| BM1684X/clip_image_vitb32_bm1684x_f16_1b.bmodel |          7.91    |
-| BM1684X/clip_image_vitb32_bm1684x_f16_8b.bmodel |          3.35    |
-| BM1684X/clip_image_vitb32_bm1684x_f16_16b.bmodel|          2.72    |
-| BM1684X/clip_image_vitb32_bm1684x_f16_32b.bmodel|          1.98    |
+| BM1684X/clip_image_vitb32_bm1684x_f16_1b.bmodel |          6.54    |
+| BM1684X/clip_image_vitb32_bm1684x_f16_8b.bmodel |         21.91    |
+| BM1684X/clip_image_vitb32_bm1684x_f16_16b.bmodel|         36.12    |
+| BM1684X/clip_image_vitb32_bm1684x_f16_32b.bmodel|         53.10    |
 
 
 > **测试说明**：
@@ -202,15 +202,16 @@ bmrt_test --bmodel models/BM1684X/clip_image_vitb32_bm1684x_f16_1b.bmodel
 
 |    测试平台   |     测试程序           |                测试模型                    |     FPS          |
 | -----------  | ---------------------| ------------------------------------------| ---------------- |
-|   SE7-32     | embeddings.py        | clip_image_vitb32_bm1684x_f16_8b.bmodel   | 159.36           |
-|   SE7-32     | embeddings.py        | clip_image_vitb32_bm1684x_f16_16b.bmodel  | 169.29           |
-|   SE7-32     | embeddings.py        | clip_image_vitb32_bm1684x_f16_32b.bmodel  | 177.67           |
-|   SE7-32     | embeddings_bmcv.py   | clip_image_vitb32_bm1684x_f16_8b.bmodel   | 268.13           |
-|   SE7-32     | embeddings_bmcv.py   | clip_image_vitb32_bm1684x_f16_16b.bmodel  | 331.49           |
-|   SE7-32     | embeddings_bmcv.py   | clip_image_vitb32_bm1684x_f16_32b.bmodel  | 430.05           |
+|   SE7-32     | embeddings.py        | clip_image_vitb32_bm1684x_f16_8b.bmodel   |  53.10           |
+|   SE7-32     | embeddings.py        | clip_image_vitb32_bm1684x_f16_16b.bmodel  |  53.98           |
+|   SE7-32     | embeddings.py        | clip_image_vitb32_bm1684x_f16_32b.bmodel  |  53.84           |
+|   SE7-32     | embeddings_bmcv.py   | clip_image_vitb32_bm1684x_f16_8b.bmodel   | 325.04           |
+|   SE7-32     | embeddings_bmcv.py   | clip_image_vitb32_bm1684x_f16_16b.bmodel  | 387.55           |
+|   SE7-32     | embeddings_bmcv.py   | clip_image_vitb32_bm1684x_f16_32b.bmodel  | 473.87           |
 
 > **测试说明**：
 > 1. 性能测试结果具有一定的波动性，实测结果与该表结果有误差属正常现象，建议多次测试取平均值。
 > 2. BM1684X SoC的主控处理器为8核 ARM A53 42320 DMIPS @2.3GHz。
 > 3. FPS为每秒钟处理的图片数量，处理一张图片的时间包括前处理、推理、后处理时间
 > 4. bmcv的前处理resize接口与clip源码有些许差异
+> 5. embeddings.py使用官方torch vision前处理，fps受cpu影响较大

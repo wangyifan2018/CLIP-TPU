@@ -20,7 +20,7 @@ logging.basicConfig(level=logging.INFO)
 
 
 def compute_embeddings(args):
-    if not os.path.exists(os.path.dirname(args.save_path)) and args.mode is None:
+    if not os.path.exists(os.path.dirname(args.save_path)):
         os.makedirs(os.path.dirname(args.save_path))
     model, preprocess = clip.load(args.image_model, args.text_model, args.dev_id)
 
