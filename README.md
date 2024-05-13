@@ -72,29 +72,8 @@ chmod -R +x scripts/
 
 
 ## 4. 模型编译
-导出的模型需要编译成BModel才能在SOPHON TPU上运行，如果使用下载好的BModel可跳过本节。建议使用TPU-MLIR编译BModel。
+导出的模型需要编译成BModel才能在SOPHON TPU上运行，此部分请参考[Clip模型的导出与编译](./docs/Clip_Export_Guide.md)。如果使用下载好的BModel可跳过本节。建议使用TPU-MLIR编译BModel。
 
-模型编译前需要安装TPU-MLIR，具体可参考[TPU-MLIR环境搭建](../../docs/Environment_Install_Guide.md#1-tpu-mlir环境搭建)。安装好后需在TPU-MLIR环境中进入例程目录。使用TPU-MLIR将onnx模型编译为BModel，具体方法可参考《TPU-MLIR快速入门手册》的“3. 编译ONNX模型”(请从[算能官网](https://developer.sophgo.com/site/index/material/31/all.html)相应版本的SDK中获取)。
-
-- 生成FP32 BModel
-
-​本例程在`scripts`目录下提供了TPU-MLIR编译FP32 BModel的脚本，请注意修改`gen_fp32bmodel_mlir.sh`中的onnx模型路径、生成模型目录和输入大小shapes等参数，并在执行时指定BModel运行的目标平台（**支持BM1684X），如：
-
-```bash
-./scripts/gen_fp32bmodel_mlir.sh bm1684x
-```
-
-​执行上述命令会在`models/BM1684`等文件夹下生成`clip_image_vitb32_bm1684x_f32_1b.bmodel`文件，即转换好的FP32 BModel。
-
-- 生成FP16 BModel
-
-​本例程在`scripts`目录下提供了TPU-MLIR编译FP16 BModel的脚本，请注意修改`gen_fp16bmodel_mlir.sh`中的onnx模型路径、生成模型目录和输入大小shapes等参数，并在执行时指定BModel运行的目标平台 （**支持BM1684X），如：
-
-```bash
-./scripts/gen_fp16bmodel_mlir.sh bm1684x
-```
-
-​执行上述命令会在`models/BM1684X/`等文件夹下生成`clip_image_vitb32_bm1684x_f16_1b.bmodel`文件，即转换好的FP16 BModel。
 
 ## 5. 安装环境
 
