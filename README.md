@@ -17,6 +17,9 @@
 - [8. 性能测试](#8-性能测试)
   - [8.1 bmrt\_test](#81-bmrt_test)
   - [8.2 程序运行性能](#82-程序运行性能)
+- [9. 其他应用](#9-其他应用)
+  - [9.1 图像分类](#91-图像分类)
+  - [9.2 构建向量数据库](#92-构建向量数据库)
 
 
 ## 1. 简介
@@ -194,3 +197,24 @@ bmrt_test --bmodel models/BM1684X/clip_image_vitb32_bm1684x_f16_1b.bmodel
 > 3. FPS为每秒钟处理的图片数量，处理一张图片的时间包括前处理、推理、后处理时间
 > 4. bmcv的前处理resize接口与clip源码有些许差异
 > 5. embeddings.py使用官方torch vision前处理，fps受cpu影响较大
+
+## 9. 其他应用
+此仓库提供其他参考例程
+
+### 9.1 图像分类
+如zeroshot_predict.py
+```bash
+Top predictions:
+
+           snake: 65.41%
+          turtle: 12.29%
+    sweet_pepper: 3.85%
+          lizard: 1.89%
+       crocodile: 1.74%
+```
+
+### 9.2 构建向量数据库
+在运行embeddings.py或者embeddings_bmcv.py后，在results目录下生成embeddings.pkl
+
+运行build_index.py，在results目录下生成index.faiss
+
